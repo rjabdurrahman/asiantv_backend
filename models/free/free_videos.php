@@ -16,7 +16,7 @@
     public function __construct($db) {
       $this->conn = $db;
     }
-
+ 
     // Get Posts
     public function read() {
       // Create query
@@ -29,6 +29,35 @@
       $stmt->execute();
 
       return $stmt;
+    }
+
+    public function read_recent($catName, $total) {
+
+      $tot = intval($total);
+
+      $pattern = "%".$catName."%";
+
+      $c_name_to_id_query = "SELECT id FROM free_video_categories WHERE name LIKE :lik LIMIT :lim";
+
+      $stmt = $this->conn->prepare($c_name_to_id_query);
+      $stmt->bindParam(':lik', $pattern);
+      $stmt->bindParam(':lim',$tot , PDO::PARAM_INT);
+      
+      
+      $stmt->execute();
+
+      $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+      $catID = $row['id'];
+
+      // Now working on getting music
+
+      $query = 'SELECT * FROM '. $this->table .' WHERE categories_id = ?  order by id desc limit 10';
+      $stmt2 = $this->conn->prepare($query);
+      $stmt2->bindParam(1, $catID);
+      $stmt2->execute();
+      return $stmt2;
+      
     }
 
     // Get Single Post
