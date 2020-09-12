@@ -37,12 +37,10 @@
 
       $pattern = "%".$catName."%";
 
-      $c_name_to_id_query = "SELECT id FROM free_video_categories WHERE name LIKE :lik LIMIT :lim";
+      $c_name_to_id_query = "SELECT id FROM free_video_categories WHERE name LIKE :lik LIMIT 1";
 
       $stmt = $this->conn->prepare($c_name_to_id_query);
       $stmt->bindParam(':lik', $pattern);
-      $stmt->bindParam(':lim',$tot , PDO::PARAM_INT);
-      
       
       $stmt->execute();
 
@@ -52,9 +50,10 @@
 
       // Now working on getting music
 
-      $query = 'SELECT * FROM '. $this->table .' WHERE categories_id = ?  order by id desc limit 10';
+      $query = 'SELECT * FROM '. $this->table .' WHERE categories_id = :cid  ORDER BY id DESC LIMIT :lim';
       $stmt2 = $this->conn->prepare($query);
-      $stmt2->bindParam(1, $catID);
+      $stmt2->bindParam(':cid', $catID);
+      $stmt2->bindParam(':lim', $tot , PDO::PARAM_INT);
       $stmt2->execute();
       return $stmt2;
       
