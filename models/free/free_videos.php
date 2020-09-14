@@ -10,6 +10,8 @@
     public $categories_id;
     public $thumbnail;
     public $link;
+    public $length;
+    public $likes;
     public $createdAt;
 
     // Constructor with DB
@@ -58,7 +60,41 @@
       return $stmt2;
       
     }
+    public function read_by_page($catName, $pageNumber) {
 
+      $startPage = intval($pageNumber);
+
+      if($startPage == 1){
+        $startPage = 1;
+      }else if($startPage > 1){
+        $startPage = (($startPage * 10) - 10) + 1;
+      }else{
+        $startPage = 1;
+      }
+
+      $pattern = "%".$catName."%";
+
+      $c_name_to_id_query = "SELECT id FROM free_video_categories WHERE name LIKE :lik LIMIT 1";
+
+      $stmt = $this->conn->prepare($c_name_to_id_query);
+      $stmt->bindParam(':lik', $pattern);
+      
+      $stmt->execute();
+
+      $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+      $catID = $row['id'];
+
+      // Now working on getting music
+
+      $query = 'SELECT * FROM '. $this->table .' WHERE categories_id = :cid  ORDER BY id DESC LIMIT :lim,10';
+      $stmt2 = $this->conn->prepare($query);
+      $stmt2->bindParam(':cid', $catID);
+      $stmt2->bindParam(':lim', $startPage , PDO::PARAM_INT);
+      $stmt2->execute();
+      return $stmt2;
+
+    }
     // Get Single Post
   public function read_single() {
     // Create query
@@ -80,13 +116,15 @@
     $this->categories_id = $row['categories_id'];
     $this->thumbnail = $row['thumbnail'];
     $this->link = $row['link'];
+    $this->length = $row['length'];
+    $this->likes = $row['likes'];
     $this->createdAt = $row['createdAt'];
     }
 
     // Create Post
     public function create() {
           // Create query
-          $query = 'INSERT INTO ' . $this->table . ' SET title = :title, categories_id = :categories_id, thumbnail = :thumbnail, link = :link';
+          $query = 'INSERT INTO ' . $this->table . ' SET title = :title, categories_id = :categories_id, thumbnail = :thumbnail, link = :link, length = :length';
 
           // Prepare statement
           $stmt = $this->conn->prepare($query);
@@ -96,12 +134,15 @@
           $this->categories_id = htmlspecialchars(strip_tags($this->categories_id));
           $this->thumbnail = htmlspecialchars(strip_tags($this->thumbnail));
           $this->link = htmlspecialchars(strip_tags($this->link));
+          $this->length = htmlspecialchars(strip_tags($this->length));
 
           // Bind data
           $stmt->bindParam(':title', $this->title);
           $stmt->bindParam(':categories_id', $this->categories_id);
           $stmt->bindParam(':thumbnail', $this->thumbnail);
           $stmt->bindParam(':link', $this->link);
+          $stmt->bindParam(':length', $this->length);
+
 
           // Execute query
           if($stmt->execute()) {
@@ -118,7 +159,7 @@
     public function update() {
           // Create query
           $query = 'UPDATE ' . $this->table . '
-                                SET title = :title, categories_id = :categories_id, thumbnail = :thumbnail, link = :link
+                                SET title = :title, categories_id = :categories_id, thumbnail = :thumbnail, link = :link, length = :length
                                 WHERE id = :id';
 
           // Prepare statement
@@ -129,6 +170,7 @@
           $this->categories_id = htmlspecialchars(strip_tags($this->categories_id));
           $this->thumbnail = htmlspecialchars(strip_tags($this->thumbnail));
           $this->link = htmlspecialchars(strip_tags($this->link));
+          $this->length = htmlspecialchars(strip_tags($this->length));
           $this->id = htmlspecialchars(strip_tags($this->id));
 
           // Bind data
@@ -136,6 +178,7 @@
           $stmt->bindParam(':categories_id', $this->categories_id);
           $stmt->bindParam(':thumbnail', $this->thumbnail);
           $stmt->bindParam(':link', $this->link);
+          $stmt->bindParam(':length', $this->length);
           $stmt->bindParam(':id', $this->id);
 
           // Execute query

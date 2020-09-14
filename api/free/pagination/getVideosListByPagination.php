@@ -6,11 +6,13 @@ header('Content-Type: application/json');
 if (!empty(isset($_GET['cname'])) && isset($_GET['cname']))
 {
 
-    if (!empty(isset($_GET['total'])) && isset($_GET['total']))
-    {
+     
+        if (!empty(isset($_GET['page'])) && isset($_GET['page'])){
 
         include_once '../../../config/Database.php';
         include_once '../../../models/free/free_videos.php';
+
+ 
 
         // Instantiate DB & connect
         $database = new Database();
@@ -20,7 +22,7 @@ if (!empty(isset($_GET['cname'])) && isset($_GET['cname']))
         $post = new Post($db);
 
         // Blog post query
-        $result = $post->read_recent($_GET['cname'], $_GET['total']);
+        $result = $post->read_by_page($_GET['cname'], $_GET['page']);
         // Get row count
         $num = $result->rowCount();
 
@@ -40,6 +42,8 @@ if (!empty(isset($_GET['cname'])) && isset($_GET['cname']))
                     'categories_id' => $categories_id,
                     'thumbnail' => $thumbnail,
                     'link' => $link,
+                    'length' => $length,
+                    'likes' => $likes,
                     'createdAt' => $createdAt
                 );
 
@@ -60,11 +64,9 @@ if (!empty(isset($_GET['cname'])) && isset($_GET['cname']))
                 'message' => 'No Posts Found'
             ));
         }
-    }
-    else
-    {
+    }else{
         echo json_encode(array(
-            'message' => 'How many result you want?'
+            'message' => 'What is the starting page?'
         ));
     }
 
@@ -75,4 +77,3 @@ else
         'message' => 'Give me category name'
     ));
 }
-

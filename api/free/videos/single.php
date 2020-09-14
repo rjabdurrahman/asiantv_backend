@@ -26,6 +26,8 @@
     'categories_id' => $post->categories_id,
     'thumbnail' => $post->thumbnail,
     'link' => $post->link,
+    'length' => $post->length,
+    'likes' => $post->likes,
     'createdAt' => $post->createdAt
   );
 

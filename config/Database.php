@@ -2,7 +2,7 @@
   class Database {
     // DB Params
     private $host = 'localhost';
-    private $db_name = 'asiantv';
+    private $db_name = 'asupdate';
     private $username = 'root';
     private $password = '';
     private $conn;

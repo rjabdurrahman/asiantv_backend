@@ -40,6 +40,8 @@ if (!empty(isset($_GET['cname'])) && isset($_GET['cname']))
                     'categories_id' => $categories_id,
                     'thumbnail' => $thumbnail,
                     'link' => $link,
+                    'length' => $length,
+                    'likes' => $likes,
                     'createdAt' => $createdAt
                 );
 

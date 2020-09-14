@@ -33,6 +33,8 @@
         'categories_id' => $categories_id,
         'thumbnail' => $thumbnail,
         'link' => $link,
+        'length' => $length,
+        'likes' => $likes,
         'createdAt' => $createdAt
       );
 
